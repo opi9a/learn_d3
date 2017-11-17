@@ -12,33 +12,61 @@
 <body>
 	
 	<script type="text/javascript">
-		
-		var dataArray = [20, 40, 50, 60];
+
 		var width = 500;
 		var height = 500;
+		var lpad = 90;
 
 		var widthScale = d3.scaleLinear()
-							.domain([0, 60])
-							.range([0, width]);
+							.domain([0, 100])
+							.range([0, width - lpad]);
 
-		var color = d3.scaleLinear()
-							.domain([0, 60])
-							.range(["red", "blue"])
+		var xAxis = d3.axisBottom()
+			.scale(widthScale);
 
-		var canvas = d3.select("body")
-					.append("svg")
-					.attr("width", width)
-					.attr("height", height);
+		d3.json("test1.json", function (data) {
+
+			var canvas = d3.select("body").append("svg")
+				.attr("width", width)
+				.attr("height", height)
+
+			canvas.selectAll("rect")
+				.data(data)
+				.enter()
+					.append("rect")
+					.attr("x", lpad)
+					.attr("width", function (d) { return widthScale(d.a);})
+					.attr("height", 40)
+					.attr("fill", "grey")
+					.attr("y", function (d, i) { return i * 45 ;})
+					;			
+			
+			canvas.selectAll("text")
+				.data(data)
+				.enter()
+					.append("text")
+					.attr("font-family", "sans-serif")
+					.attr("fill", "black")
+					.attr("y", function (d, i) { return i * 45 + 30;})
+					.text(function (d) { return d.day + " " + d.a;});
+
+			// canvas.selectAll("text")
+			// 	.data(data)
+			// 	.enter()
+			// 		.append("text")
+			// 		.attr("font-family", "sans-serif")
+			// 		.attr("fill", "black")
+			// 		.attr("y", function (d, i) { return i * 45 + 30;})
+			// 		.attr("x", function (d, i) { return widthScale(d.a) - 40})
+			// 		.text(function (d) { return d.a;})
+			// 		;
+
+			canvas.append("g")
+				.attr("transform", "translate(90, 250)")
+				.call(xAxis);
+		})
 
 
-		var bars = canvas.selectAll("rect")
-					.data(dataArray)
-					.enter()
-						.append("rect")
-						.attr("width", function(d) { return widthScale(d); })
-						.attr("fill", function(d) { return color(d); })
-						.attr("height", 50)
-						.attr("y", function(d, i) { return i * 70;});
 
 
 	</script>
@@ -46,3 +74,10 @@
 </body>
 </html>
 
+
+<!-- if  more data than DOM elements, then enter() creates additional elements and binds them to the excess data 
+	
+	if more DOM elements than data, exit() returns the excess DOM elements
+	
+	the update() selection (not explicit?) returns the existing DOM elements
+	-->

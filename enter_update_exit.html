@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>learning of d3</title>
+	<!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+	<script src="d3/d3.js"></script>
+</head>
+
+
+<body>
+	
+	<script type="text/javascript">
+		
+		// change number of data elements to create excess of data or elements,
+		// triggering enter() and exit() selections
+		var data = [1,2,3,4,5,6];
+		var width = 500;
+		var height = 500;
+
+		var canvas = d3.select("body")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height);
+
+// manually added circle
+		var circle = canvas.append("circle")
+					.attr("cx", 110)
+					.attr("cy", 100)
+					.attr("r", 40);
+
+
+// binds all existing - with enter() for any data excess, or exit() for obj excess
+		var circle = canvas.selectAll("circle")
+					.data(data)
+					// next is the update selection - works on any existing circles
+					.attr("fill", "blue")
+					// the enter() selection - creates new circle for any excess data
+					.enter()
+						.append("circle")
+						.attr("cx", 200)
+						.attr("cy", function(d) {return d *20;})
+						.attr("r", 10)
+						.attr("fill", "green");
+
+		// the exit selection - applies to excess existing circles
+		var circle = canvas.selectAll("circle")
+					.data(data)
+					.exit()
+						.attr("fill", "red");
+	</script>
+
+</body>
+</html>
+
+
+<!-- if  more data than DOM elements, then enter() creates additional elements and binds them to the excess data 
+	
+	if more DOM elements than data, exit() returns the excess DOM elements
+	
+	the update() selection (not explicit?) returns the existing DOM elements
+	-->
