@@ -15,59 +15,43 @@
 
 		var width = 500;
 		var height = 500;
-		var lpad = 90;
 
-		var widthScale = d3.scaleLinear()
-							.domain([0, 100])
-							.range([0, width - lpad]);
+		var canvas = d3.select("body").append("svg")
+			.attr("width", width)
+			.attr("height", height)
 
-		var xAxis = d3.axisBottom()
-			.scale(widthScale);
-
-		d3.json("test1.json", function (data) {
-
-			var canvas = d3.select("body").append("svg")
-				.attr("width", width)
-				.attr("height", height)
-
-			canvas.selectAll("rect")
-				.data(data)
-				.enter()
-					.append("rect")
-					.attr("x", lpad)
-					.attr("width", function (d) { return widthScale(d.a);})
-					.attr("height", 40)
-					.attr("fill", "grey")
-					.attr("y", function (d, i) { return i * 45 ;})
-					;			
-			
-			canvas.selectAll("text")
-				.data(data)
-				.enter()
-					.append("text")
-					.attr("font-family", "sans-serif")
-					.attr("fill", "black")
-					.attr("y", function (d, i) { return i * 45 + 30;})
-					.text(function (d) { return d.day + " " + d.a;});
-
-			// canvas.selectAll("text")
-			// 	.data(data)
-			// 	.enter()
-			// 		.append("text")
-			// 		.attr("font-family", "sans-serif")
-			// 		.attr("fill", "black")
-			// 		.attr("y", function (d, i) { return i * 45 + 30;})
-			// 		.attr("x", function (d, i) { return widthScale(d.a) - 40})
-			// 		.text(function (d) { return d.a;})
-			// 		;
-
-			canvas.append("g")
-				.attr("transform", "translate(90, 250)")
-				.call(xAxis);
-		})
+		var data = [
+			{x: 10, y: 20},
+			{x: 20, y: 50},
+			{x: 21, y: 51},
+			{x: 144, y: 66},
+			{x: 499, y: 68}
+		];
 
 
+		var group = canvas.append("g")
+				.attr("transform", "translate(90, 250)");
+		
+		// v4 doesn't  use d3.svg.line() - no svg
+		var line = d3.line()
+			.x(function(d) {  return d.x; })
+			.y(function(d) {  return d.y; });
 
+		group.selectAll("path")
+			.data([data])
+			.enter()
+				.append("path")
+				.attr("d", line)
+				.attr("fill", "none")
+				.attr("stroke", "blue")
+				.attr("stroke-width", 2);
+
+		d3.select("body").transition()
+			.delay(2000)
+			.duration(3000)
+		    .style("background-color", "black")
+		    .select("path")
+		    	.attr("stroke-width", 20);
 
 	</script>
 
